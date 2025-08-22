@@ -8,11 +8,45 @@ export const toyService = {
   save,
   remove,
   getEmptyToy,
+  getDefaultFilter,
 }
 
 function query(filterBy = {}, sortBy = {}) {
   return storageService.query(STORAGE_KEY).then(toys => {
-    
+
+    // DEMO DATA FOR LOCAL STORAGE (delete when backend integrated)
+    if (!toys || !toys.length) {
+      toys = [
+        {
+          _id: 't101',
+          name: 'Buzz Lightyear',
+          price: 19.99,
+          labels: ['battery-powered', 'space'],
+          createdAt: Date.now(),
+          inStock: true
+        },
+        {
+          _id: 't102',
+          name: 'Barbie Dreamhouse',
+          price: 89.99,
+          labels: ['fashion', 'dollhouse'],
+          createdAt: Date.now(),
+          inStock: true
+        },
+        {
+          _id: 't103',
+          name: 'LEGO Star Wars',
+          price: 59.99,
+          labels: ['building', 'star wars'],
+          createdAt: Date.now(),
+          inStock: false
+        }
+      ]
+      
+      toys.forEach(toy => storageService.post(STORAGE_KEY, toy))
+    }
+
+    // Filtering
     if (filterBy.name) {
       const regex = new RegExp(filterBy.name, 'i')
       toys = toys.filter(toy => regex.test(toy.name))
@@ -30,6 +64,11 @@ function query(filterBy = {}, sortBy = {}) {
       toys.sort((a, b) => {
         const valA = a[type]
         const valB = b[type]
+
+        if (typeof valA === 'string' && typeof valB === 'string') {
+          return desc ? valB.localeCompare(valA) : valA.localeCompare(valB)
+        }
+
         return desc ? valB - valA : valA - valB
       })
     }
@@ -59,5 +98,14 @@ function getEmptyToy() {
     inStock: true,
     labels: [],
     createdAt: Date.now(),
+  }
+}
+
+export function getDefaultFilter() {
+  return {
+    name: '',
+    price: null,
+    labels: [],
+    inStock: true
   }
 }
