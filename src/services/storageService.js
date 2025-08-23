@@ -18,12 +18,11 @@ function get(key, id) {
 }
 
 function post(key, newItem) {
-  newItem._id = _makeId()
-  return query(key).then(items => {
-    items.push(newItem)
-    localStorage.setItem(key, JSON.stringify(items))
-    return newItem
-  })
+  // read current items fresh from localStorage
+  const items = JSON.parse(localStorage.getItem(key)) || []
+  items.push(newItem)
+  localStorage.setItem(key, JSON.stringify(items))
+  return Promise.resolve(newItem)
 }
 
 function put(key, updatedItem) {

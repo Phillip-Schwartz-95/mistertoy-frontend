@@ -8,51 +8,56 @@ export const UPDATE_TOY = 'UPDATE_TOY'
 export const TOY_UNDO = 'TOY_UNDO'
 export const SET_TOY_FILTER = 'SET_TOY_FILTER'
 export const SET_TOY_LOADING = 'SET_TOY_LOADING'
+export const SET_TOY_SORT = 'SET_TOY_SORT'
 
 const initialState = {
-  toys: [],
-  isLoading: false,
-  filterBy: toyService.getDefaultFilter(),
-  lastToys: [],
+    toys: [],
+    isLoading: false,
+    filterBy: toyService.getDefaultFilter(),
+    sortBy: { type: null, desc: false },
+    lastToys: [],
 }
 
 export function toyReducer(state = initialState, action = {}) {
-  switch (action.type) {
-    case SET_TOYS:
-      return { ...state, toys: action.toys }
+    switch (action.type) {
+        case SET_TOYS:
+            return { ...state, toys: action.toys }
 
-    case REMOVE_TOY:
-      const lastToys = [...state.toys]
-      return {
-        ...state,
-        toys: state.toys.filter(toy => toy._id !== action.toyId),
-        lastToys,
-      }
+        case REMOVE_TOY:
+            const lastToys = [...state.toys]
+            return {
+                ...state,
+                toys: state.toys.filter(toy => toy._id !== action.toyId),
+                lastToys,
+            }
 
-    case ADD_TOY:
-      return { ...state, toys: [...state.toys, action.toy] }
+        case ADD_TOY:
+            return { ...state, toys: [...state.toys, action.toy] }
 
-    case UPDATE_TOY:
-      return {
-        ...state,
-        toys: state.toys.map(toy =>
-          toy._id === action.toy._id ? action.toy : toy
-        ),
-      }
+        case UPDATE_TOY:
+            return {
+                ...state,
+                toys: state.toys.map(toy =>
+                    toy._id === action.toy._id ? action.toy : toy
+                ),
+            }
 
-    case TOY_UNDO:
-      return { ...state, toys: [...state.lastToys] }
+        case TOY_UNDO:
+            return { ...state, toys: [...state.lastToys] }
 
-    case SET_TOY_FILTER:
-      return {
-        ...state,
-        filterBy: { ...state.filterBy, ...action.filterBy },
-      }
+        case SET_TOY_FILTER:
+            return {
+                ...state,
+                filterBy: { ...state.filterBy, ...action.filterBy },
+            }
 
-    case SET_TOY_LOADING:
-      return { ...state, isLoading: action.isLoading }
+        case SET_TOY_LOADING:
+            return { ...state, isLoading: action.isLoading }
 
-    default:
-      return state
-  }
+        case SET_TOY_SORT:
+            return { ...state, sortBy: action.sortBy }
+
+        default:
+            return state
+    }
 }
