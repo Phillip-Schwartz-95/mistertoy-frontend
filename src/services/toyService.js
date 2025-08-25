@@ -73,6 +73,7 @@ function remove(toyId) {
 
 function getEmptyToy() {
     return {
+        _id: storageService._makeId(),
         name: '',
         price: 0,
         inStock: true,

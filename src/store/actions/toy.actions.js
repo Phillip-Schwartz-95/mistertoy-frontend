@@ -8,81 +8,46 @@ import {
     TOY_UNDO,
     SET_TOY_FILTER,
     SET_TOY_LOADING,
+    SET_TOY_SORT,
 } from '../reducers/toy.reducer.js'
 
-export function loadToys() {
-    return dispatch => {
-        const { filterBy, sortBy } = store.getState().toyModule
-        console.log('filterBy:', filterBy, 'sortBy:', sortBy)
-        dispatch({ type: SET_TOY_LOADING, isLoading: true })
+// SYNCHRONOUS ACTIONS
 
-        return toyService.query(filterBy, sortBy)
-            .then(toys => {
-                dispatch({ type: SET_TOYS, toys })
-            })
-            .catch(err => {
-                console.log('toy action -> Cannot load toys', err)
-                throw err
-            })
-            .finally(() => {
-                dispatch({ type: SET_TOY_LOADING, isLoading: false })
-            })
-    }
+export function setToys(toys) {
+    store.dispatch({ type: SET_TOYS, toys })
 }
 
-export function removeToy(toyId) {
-    return dispatch => {
-        return toyService.remove(toyId)
-            .then(() => {
-                dispatch({ type: REMOVE_TOY, toyId })
-            })
-            .catch(err => {
-                console.log('toy action -> Cannot remove toy', err)
-                throw err
-            })
-    }
+export function removeToySync(toyId) {
+    store.dispatch({ type: REMOVE_TOY, toyId })
 }
 
-export function removeToyOptimistic(toyId) {
-    return dispatch => {
-        dispatch({ type: REMOVE_TOY, toyId }) // Optimistic update
-
-        return toyService.remove(toyId)
-            .then(() => {
-                console.log('Removed Toy!')
-            })
-            .catch(err => {
-                dispatch({ type: TOY_UNDO }) // Rollback
-                console.log('toy action -> Cannot remove toy', err)
-                throw err
-            })
-    }
+export function addToy(toy) {
+    store.dispatch({ type: ADD_TOY, toy })
 }
 
-export function saveToy(toy) {
-    return dispatch => {
-        const type = toy._id ? UPDATE_TOY : ADD_TOY
+export function updateToy(toy) {
+    store.dispatch({ type: UPDATE_TOY, toy })
+}
 
-        return toyService.save(toy)
-            .then(savedToy => {
-                dispatch({ type, toy: savedToy })
-                return savedToy
-            })
-            .catch(err => {
-                console.log('toy action -> Cannot save toy', err)
-                throw err
-            })
-    }
+export function undoToy() {
+    store.dispatch({ type: TOY_UNDO })
 }
 
 export function setToyFilter(filterBy) {
-    return dispatch => {
-        dispatch({ type: SET_TOY_FILTER, filterBy })
-    }
+    store.dispatch({ type: SET_TOY_FILTER, filterBy })
 }
 
 export function setToySort(sortBy) {
-    return dispatch => {
-        dispatch({ type: SET_TOY_SORT, sortBy })
-    }
+    store.dispatch({ type: SET_TOY_SORT, sortBy })
 }
+
+export function setToyLoading(isLoading) {
+    store.dispatch({ type: SET_TOY_LOADING, isLoading })
+}
+
+// ASYNC OPERATIONS MOVED TO COMPONENTS
+
+// Example usage in components:
+// toyService.query(filterBy, sortBy).then(toys => setToys(toys))
+// toyService.remove(toyId).then(() => removeToySync(toyId))
+// toyService.save(toy).then(savedToy => { toy._id ? updateToy(savedToy) : addToy(savedToy) })

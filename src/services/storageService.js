@@ -4,6 +4,7 @@ const storageService = {
   post,
   put,
   remove,
+  _makeId
 }
 
 export default storageService

@@ -1,14 +1,20 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { toyService } from '../services/toy.service.js'
+import { toyService } from '../services/toyService.js'
+import { addToy, updateToy } from '../store/actions/toy.actions.js'
 
 export function ToyEdit() {
   const { toyId } = useParams()
   const [toy, setToy] = useState(toyService.getEmptyToy())
   const navigate = useNavigate()
 
+  // ---------------- LOAD TOY ----------------
   useEffect(() => {
-    if (toyId) toyService.get(toyId).then(setToy)
+    if (toyId) {
+      toyService.getById(toyId)
+        .then(setToy)
+        .catch(err => console.log('Cannot load toy', err))
+    }
   }, [toyId])
 
   function handleChange({ target }) {
@@ -18,7 +24,13 @@ export function ToyEdit() {
 
   function onSaveToy(ev) {
     ev.preventDefault()
-    toyService.save(toy).then(() => navigate('/'))
+
+    toyService.save(toy)
+      .then(savedToy => {
+        toy._id ? updateToy(savedToy) : addToy(savedToy)
+        navigate('/toy')
+      })
+      .catch(err => console.log('Cannot save toy', err))
   }
 
   return (
@@ -29,3 +41,4 @@ export function ToyEdit() {
     </form>
   )
 }
+

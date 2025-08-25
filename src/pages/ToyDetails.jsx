@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import { toyService } from '../services/toyService.js'
 import Popup from '../components/Popup.jsx'
 import Chat from '../components/Chat.jsx'
@@ -10,7 +10,9 @@ export default function ToyDetails() {
   const [isChatOpen, setIsChatOpen] = useState(false)
 
   useEffect(() => {
-    toyService.getById(toyId).then(setToy)
+    toyService.getById(toyId)
+      .then(setToy)
+      .catch(err => console.log('Cannot load toy', err))
   }, [toyId])
 
   if (!toy) return <div>Loading...</div>

@@ -1,17 +1,15 @@
-import { legacy_createStore as createStore, applyMiddleware, compose, combineReducers } from 'redux'
-import { thunk } from 'redux-thunk' // Correct import
+import { createStore, combineReducers, compose } from 'redux'
 import { toyReducer } from './reducers/toy.reducer.js'
 
 const rootReducer = combineReducers({
-  toyModule: toyReducer,
+    toyModule: toyReducer,
 })
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
 export const store = createStore(
-  rootReducer,
-  composeEnhancers(applyMiddleware(thunk)) // thunk applied here
+    rootReducer,
+    composeEnhancers() // no thunk
 )
 
 window.gStore = store
-
