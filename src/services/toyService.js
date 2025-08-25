@@ -1,4 +1,5 @@
 import storageService from './storageService.js'
+import { demoData } from '../models/demoData.js'
 
 const STORAGE_KEY = 'toyDB'
 
@@ -11,50 +12,43 @@ export const toyService = {
     getDefaultFilter,
 }
 
-function query(filterBy = {}, sortBy = {}) {
-    return storageService.query(STORAGE_KEY).then(toys => {
+export function query(filterBy = {}, sortBy = {}) {
+  return storageService.query(STORAGE_KEY).then(toys => {
+    // inject demo data if storage is empty
+    if (!toys || !toys.length) {
+      return Promise.all(demoData.map(toy => storageService.post(STORAGE_KEY, toy)))
+        .then(() => storageService.query(STORAGE_KEY)) // now all toys are saved
+    }
 
-        // DEMO DATA FOR LOCAL STORAGE (delete when backend integrated)
-        if (!toys || !toys.length) {
-            const demoToys = [
-                { _id: 't101', name: 'Buzz Lightyear', price: 19.99, labels: ['battery-powered', 'space'], createdAt: Date.now(), inStock: true },
-                { _id: 't102', name: 'Barbie Dreamhouse', price: 89.99, labels: ['fashion', 'dollhouse'], createdAt: Date.now(), inStock: true },
-                { _id: 't103', name: 'LEGO Star Wars', price: 59.99, labels: ['building', 'star wars'], createdAt: Date.now(), inStock: false }
-            ]
+    // --- Filtering ---
+    if (filterBy.name) {
+      const regex = new RegExp(filterBy.name, 'i')
+      toys = toys.filter(toy => regex.test(toy.name))
+    }
+    if (filterBy.inStock !== undefined) {
+      toys = toys.filter(toy => toy.inStock === filterBy.inStock)
+    }
+    if (filterBy.labels?.length) {
+      toys = toys.filter(toy => filterBy.labels.every(lbl => toy.labels.includes(lbl)))
+    }
 
-            return Promise.all(demoToys.map(toy => storageService.post(STORAGE_KEY, toy)))
-                .then(() => storageService.query(STORAGE_KEY)) // now all toys are saved
+    // --- Sorting ---
+    if (sortBy.type) {
+      const { type, desc } = sortBy
+      toys.sort((a, b) => {
+        const valA = a[type]
+        const valB = b[type]
+
+        if (typeof valA === 'string' && typeof valB === 'string') {
+          return desc ? valB.localeCompare(valA) : valA.localeCompare(valB)
         }
 
-        // Filtering
-        if (filterBy.name) {
-            const regex = new RegExp(filterBy.name, 'i')
-            toys = toys.filter(toy => regex.test(toy.name))
-        }
-        if (filterBy.inStock !== undefined) {
-            toys = toys.filter(toy => toy.inStock === filterBy.inStock)
-        }
-        if (filterBy.labels?.length) {
-            toys = toys.filter(toy => filterBy.labels.every(lbl => toy.labels.includes(lbl)))
-        }
+        return desc ? valB - valA : valA - valB
+      })
+    }
 
-        // Sorting
-        if (sortBy.type) {
-            const { type, desc } = sortBy
-            toys.sort((a, b) => {
-                const valA = a[type]
-                const valB = b[type]
-
-                if (typeof valA === 'string' && typeof valB === 'string') {
-                    return desc ? valB.localeCompare(valA) : valA.localeCompare(valB)
-                }
-
-                return desc ? valB - valA : valA - valB
-            })
-        }
-
-        return toys
-    })
+    return toys
+  })
 }
 
 function getById(toyId) {
