@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import ToyList from '../components/ToyList.jsx'
 import ToyFilter from '../components/ToyFilter.jsx'
 import {
@@ -12,6 +13,7 @@ import {
 import { toyService } from '../services/toyService.js'
 
 export default function ToyIndex() {
+  const navigate = useNavigate()
   const toys = useSelector(state => state.toyModule.toys)
   const filterBy = useSelector(state => state.toyModule.filterBy)
   const sortBy = useSelector(state => state.toyModule.sortBy)
@@ -28,19 +30,12 @@ export default function ToyIndex() {
 
   // ---------------- ADD TOY ----------------
   function onAddToy() {
-    const toyToSave = toyService.getEmptyToy()
-    toyToSave.name = 'Random Toy ' + Math.floor(Math.random() * 100)
-    toyToSave.price = +(Math.random() * 100).toFixed(2)
-
-    toyService.save(toyToSave)
-      .then(savedToy => addToy(savedToy))
-      .catch(err => console.log('Cannot add toy', err))
+    navigate('/toy/edit')  // navigate to the ToyEdit page for a new toy
   }
 
   // ---------------- REMOVE TOY ----------------
   function onRemoveToy(toyId) {
-    // Optimistic update
-    removeToySync(toyId)
+    removeToySync(toyId)  // optimistic update
     toyService.remove(toyId)
       .catch(err => {
         console.log('Cannot remove toy', err)
@@ -54,20 +49,7 @@ export default function ToyIndex() {
 
   // ---------------- EDIT TOY ----------------
   function onEditToy(toy) {
-    const name = prompt('New name?', toy.name)
-    if (name === null) return
-    const priceStr = prompt('New price?', toy.price)
-    if (priceStr === null) return
-    const price = +priceStr
-    const inStock = confirm('Is the toy in stock? OK = Yes, Cancel = No')
-
-    const toyToSave = { ...toy, name, price, inStock }
-
-    toyService.save(toyToSave)
-      .then(savedToy => {
-        toy._id ? updateToy(savedToy) : addToy(savedToy)
-      })
-      .catch(err => console.log('Cannot save toy', err))
+    navigate(`/toy/edit/${toy._id}`)  // navigate to the ToyEdit page for an existing toy
   }
 
   return (
