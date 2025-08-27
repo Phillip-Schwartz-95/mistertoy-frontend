@@ -1,7 +1,6 @@
-import storageService from './storageService.js'
-import { demoData } from '../models/demoData.js'
+import { httpService } from './httpService.js'
 
-const STORAGE_KEY = 'toyDB'
+const TOY_API = 'toy/'
 
 export const toyService = {
     query,
@@ -12,62 +11,41 @@ export const toyService = {
     getDefaultFilter,
 }
 
-export function query(filterBy = {}, sortBy = {}) {
-  return storageService.query(STORAGE_KEY).then(toys => {
-    // inject demo data if storage is empty
-    if (!toys || !toys.length) {
-      return Promise.all(demoData.map(toy => storageService.post(STORAGE_KEY, toy)))
-        .then(() => storageService.query(STORAGE_KEY)) // now all toys are saved
-    }
+function query(filterBy = {}, sortBy = {}) {
+    // Backend handles filtering; sortBy can stay in frontend
+    return httpService.get(TOY_API, filterBy)
+        .then(toys => {
+            if (!sortBy.type) return toys
 
-    // --- Filtering ---
-    if (filterBy.name) {
-      const regex = new RegExp(filterBy.name, 'i')
-      toys = toys.filter(toy => regex.test(toy.name))
-    }
-    if (filterBy.inStock !== undefined) {
-      toys = toys.filter(toy => toy.inStock === filterBy.inStock)
-    }
-    if (filterBy.labels?.length) {
-      toys = toys.filter(toy => filterBy.labels.every(lbl => toy.labels.includes(lbl)))
-    }
+            const { type, desc } = sortBy
+            return toys.sort((a, b) => {
+                const valA = a[type]
+                const valB = b[type]
 
-    // --- Sorting ---
-    if (sortBy.type) {
-      const { type, desc } = sortBy
-      toys.sort((a, b) => {
-        const valA = a[type]
-        const valB = b[type]
-
-        if (typeof valA === 'string' && typeof valB === 'string') {
-          return desc ? valB.localeCompare(valA) : valA.localeCompare(valB)
-        }
-
-        return desc ? valB - valA : valA - valB
-      })
-    }
-
-    return toys
-  })
+                if (typeof valA === 'string' && typeof valB === 'string') {
+                    return desc ? valB.localeCompare(valA) : valA.localeCompare(valB)
+                }
+                return desc ? valB - valA : valA - valB
+            })
+        })
 }
 
 function getById(toyId) {
-    return storageService.get(STORAGE_KEY, toyId)
+    return httpService.get(TOY_API + toyId)
 }
 
 function save(toy) {
-    return toy._id
-        ? storageService.put(STORAGE_KEY, toy)
-        : storageService.post(STORAGE_KEY, toy)
+    if (toy._id) return httpService.put(TOY_API + toy._id, toy)
+    return httpService.post(TOY_API, toy)
 }
 
 function remove(toyId) {
-    return storageService.remove(STORAGE_KEY, toyId)
+    return httpService.delete(TOY_API + toyId)
 }
 
 function getEmptyToy() {
     return {
-        _id: storageService._makeId(),
+        _id: '', // backend will assign an ID
         name: '',
         price: 0,
         inStock: true,
@@ -76,7 +54,7 @@ function getEmptyToy() {
     }
 }
 
-export function getDefaultFilter() {
+function getDefaultFilter() {
     return {
         name: '',
         price: null,
@@ -84,3 +62,4 @@ export function getDefaultFilter() {
         inStock: undefined
     }
 }
+
