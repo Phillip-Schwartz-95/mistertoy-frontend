@@ -1,9 +1,8 @@
 import Axios from 'axios'
 
 const BASE_URL = process.env.NODE_ENV === 'production'
-    ? '/api/'
+    ? 'https://mistertoy-backend-o4uh.onrender.com/api/'
     : '//localhost:3030/api/'
-
 
 var axios = Axios.create({
     withCredentials: true
