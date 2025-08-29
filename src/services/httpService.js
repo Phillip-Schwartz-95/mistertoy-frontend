@@ -1,6 +1,6 @@
 import Axios from 'axios'
 
-const BASE_URL = window.location.hostname.includes('github.io')
+const BASE_URL = window.location.hostname === 'phillip-schwartz-95.github.io'
     ? 'https://mistertoy-backend-o4uh.onrender.com/api/'
     : '//localhost:3030/api/'
 
