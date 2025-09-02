@@ -1,0 +1,23 @@
+@media (max-width: 900px) {
+  main {
+    padding: var(--space-m);
+  }
+
+  .toy-list {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .main-header {
+    text-align: center;
+  }
+
+  .toy-list {
+    grid-template-columns: 1fr;
+  }
+
+  .popup {
+    padding: var(--space-m);
+  }
+}
