@@ -1,11 +1,12 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { Header } from '../components/Header.jsx'
 import { toyService } from '../services/toyService.js'
 import { addToy, updateToy } from '../store/actions/toy.actions.js'
 import { useOnlineStatus } from '../custom-hooks/useOnlineStatus.js'
 import { useExitWhileUnsavedChanges } from '../custom-hooks/useExitWhileUnsavedChanges.js'
 
-export function ToyEdit() {
+export default function ToyEdit() {
   const { toyId } = useParams()
   const [toy, setToy] = useState(toyService.getEmptyToy())
   const [isDirty, setIsDirty] = useState(false)
@@ -47,11 +48,14 @@ export function ToyEdit() {
   }
 
   return (
-    <form onSubmit={onSaveToy}>
-      {!isOnline && <p style={{color: 'red'}}>Offline: changes cannot be saved</p>}
-      <input name="name" value={toy.name} onChange={handleChange} />
-      <input name="price" type="number" value={toy.price} onChange={handleChange} />
-      <button disabled={!isOnline}>Save</button>
-    </form>
+    <>
+      <Header />
+      <form onSubmit={onSaveToy}>
+        {!isOnline && <p style={{ color: 'red' }}>Offline: changes cannot be saved</p>}
+        <input name="name" value={toy.name} onChange={handleChange} />
+        <input name="price" type="number" value={toy.price} onChange={handleChange} />
+        <button disabled={!isOnline}>Save</button>
+      </form>
+    </>
   )
 }

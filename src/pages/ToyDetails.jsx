@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { toyService } from '../services/toyService.js'
+import { Header } from '../components/Header.jsx'
 import Popup from '../components/Popup.jsx'
 import Chat from '../components/Chat.jsx'
 
@@ -18,6 +19,9 @@ export default function ToyDetails() {
   if (!toy) return <div>Loading...</div>
 
   return (
+    <>
+      <Header />
+  
     <section className="toy-details">
       <h2>{toy.name}</h2>
       <img src={toy.imgUrl} alt={toy.name} />
@@ -38,5 +42,7 @@ export default function ToyDetails() {
         </Popup>
       )}
     </section>
+
+  </>
   )
 }

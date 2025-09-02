@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import Header from '../components/Header.jsx'
 import ToyList from '../components/ToyList.jsx'
 import ToyFilter from '../components/ToyFilter.jsx'
 import {
@@ -53,6 +54,8 @@ export default function ToyIndex() {
   }
 
   return (
+     <>
+      <Header />
     <section className="toy-index">
       <div className="toy-controls">
         <ToyFilter />
@@ -66,5 +69,6 @@ export default function ToyIndex() {
           onEditToy={onEditToy}
         />}
     </section>
+    </>
   )
 }
