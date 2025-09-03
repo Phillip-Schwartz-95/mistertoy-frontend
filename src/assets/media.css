@@ -1,6 +1,7 @@
 @media (max-width: 900px) {
   main {
     padding: var(--space-m);
+    padding-top: 80px;
   }
 
   .toy-list {

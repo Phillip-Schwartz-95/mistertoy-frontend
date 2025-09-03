@@ -9,7 +9,7 @@
   /* Spacing */
   --space-s: .5rem;
   --space-m: 1rem;
-  --space-l: 2rem;
+  --space-l: 3rem;
   --radius: 0.75rem;
 
   /* Font */
@@ -42,6 +42,7 @@ button {
   background: var(--clr-primary);
   color: #fff;
   padding: var(--space-s) var(--space-m);
+  margin: 7px;
   border-radius: var(--radius);
   transition: background .3s;
 }

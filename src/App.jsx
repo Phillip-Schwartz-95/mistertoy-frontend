@@ -5,7 +5,12 @@ import ToyEdit  from './pages/ToyEdit.jsx'
 import Dashboard  from './pages/Dashboard.jsx'
 import About from './pages/About.jsx'
 import { Home } from './pages/Home.jsx'
-import { Header } from './components/Header.jsx'
+import Header from './components/Header.jsx'
+import './assets/base.css'
+import './assets/components.css'
+import './assets/layout.css'
+import './assets/media.css'
+import './assets/pages.css'
 
 function App() {
   return (

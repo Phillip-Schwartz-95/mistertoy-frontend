@@ -1,6 +1,5 @@
 import { APIProvider, Map, AdvancedMarker, useAdvancedMarkerRef } from '@vis.gl/react-google-maps'
 import { useState } from 'react'
-import { Header } from '../components/Header'
 
 const API_KEY = 'AIzaSyAYw9vaCHVbdERyNPyu9G1xH_9C7bCK-gw'
 
