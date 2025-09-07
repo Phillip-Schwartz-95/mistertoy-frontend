@@ -6,6 +6,7 @@ import { toyService } from '../services/toyService.js'
 import { addToy, updateToy } from '../store/actions/toy.actions.js'
 import { useOnlineStatus } from '../custom-hooks/useOnlineStatus.js'
 import { useExitWhileUnsavedChanges } from '../custom-hooks/useExitWhileUnsavedChanges.js'
+import { useTranslation } from 'react-i18next'
 
 export default function ToyEdit() {
   const { toyId } = useParams()
@@ -13,6 +14,7 @@ export default function ToyEdit() {
   const [isDirty, setIsDirty] = useState(false)
   const navigate = useNavigate()
   const isOnline = useOnlineStatus()
+  const { t } = useTranslation()
 
   // Warn if leaving with unsaved changes
   useExitWhileUnsavedChanges(isDirty)
@@ -29,18 +31,18 @@ export default function ToyEdit() {
   // Yup validation schema
   const ToySchema = Yup.object().shape({
     name: Yup.string()
-      .required('Name is required')
-      .min(2, 'Too short!')
-      .max(50, 'Too long!'),
+      .required(t('errors.nameRequired'))
+      .min(2, t('errors.nameTooShort'))
+      .max(50, t('errors.nameTooLong')),
     price: Yup.number()
-      .required('Price is required')
-      .min(1, 'Price must be at least 1'),
+      .required(t('errors.priceRequired'))
+      .min(1, t('errors.priceMin')),
   })
 
   // Save handler
   function onSaveToy(values) {
     if (!isOnline) {
-      alert('You are offline! Cannot save changes.')
+      alert(t('errors.offline'))
       return
     }
 

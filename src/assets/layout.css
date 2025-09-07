@@ -25,6 +25,12 @@
   font-size: 1.5rem;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* space between nav and dropdown */
+}
+
 .header-right a {
   margin-left: var(--space-m);
   font-weight: 500;

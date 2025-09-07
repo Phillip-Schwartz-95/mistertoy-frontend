@@ -1,10 +1,13 @@
+import { useTranslation } from 'react-i18next'
 
 export function Home() {
+    const { t } = useTranslation()
+
     return (
         <>
-            <section>
-                <h1>Welcome to Mister Toy!</h1>
-                <p>Use the navigation above to explore toys, dashboard, and branches.</p>
+            <section className='home'>
+                <h1>{t('welcome')}</h1>
+                <p>{t('instructions')}</p>
             </section>
         </>
     )
