@@ -4,13 +4,9 @@ import { useNavigate } from 'react-router-dom'
 import ToyList from '../components/ToyList.jsx'
 import ToyFilter from '../components/ToyFilter.jsx'
 import {
-  setToys,
-  removeToySync,
-  addToy,
-  updateToy,
-  setToyLoading
+  loadToys,
+  deleteToy,
 } from '../store/actions/toy.actions.js'
-import { toyService } from '../services/toyService.js'
 
 export default function ToyIndex() {
   const navigate = useNavigate()
@@ -21,52 +17,43 @@ export default function ToyIndex() {
 
   // ---------------- LOAD TOYS ----------------
   useEffect(() => {
-    setToyLoading(true)
-    toyService.query(filterBy, sortBy)
-      .then(setToys)
-      .catch(err => console.log('Cannot load toys', err))
-      .finally(() => setToyLoading(false))
+    loadToys(filterBy, sortBy)
   }, [filterBy, sortBy])
 
-  // ---------------- ADD TOY ----------------
   function onAddToy() {
-    navigate('/toy/edit')  // navigate to the ToyEdit page for a new toy
+    navigate('/toy/edit')
   }
 
-  // ---------------- REMOVE TOY ----------------
-  function onRemoveToy(toyId) {
-    removeToySync(toyId)  // optimistic update
-    toyService.remove(toyId)
-      .catch(err => {
-        console.log('Cannot remove toy', err)
-        // Rollback if failed
-        setToyLoading(true)
-        toyService.query(filterBy, sortBy)
-          .then(setToys)
-          .finally(() => setToyLoading(false))
-      })
+  async function onRemoveToy(toyId) {
+    try {
+      await deleteToy(toyId)
+    } catch (err) {
+      console.error('Cannot remove toy', err)
+    }
   }
 
-  // ---------------- EDIT TOY ----------------
   function onEditToy(toy) {
-    navigate(`/toy/edit/${toy._id}`)  // navigate to the ToyEdit page for an existing toy
+    navigate(`/toy/edit/${toy._id}`)
   }
 
   return (
-     <>
     <section className="toy-index">
       <div className="toy-controls">
         <ToyFilter />
-        <button className="add-btn" onClick={onAddToy}>Add Random Toy ⛐</button>
+        <button className="add-btn" onClick={onAddToy}>
+          Add Random Toy ⛐
+        </button>
       </div>
 
-      {isLoading ? <p>Loading toys...</p> :
+      {isLoading ? (
+        <p>Loading toys...</p>
+      ) : (
         <ToyList
           toys={toys}
           onRemoveToy={onRemoveToy}
           onEditToy={onEditToy}
-        />}
+        />
+      )}
     </section>
-    </>
   )
 }

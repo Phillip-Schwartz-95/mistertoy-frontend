@@ -11,41 +11,58 @@ export const toyService = {
     getDefaultFilter,
 }
 
-function query(filterBy = {}, sortBy = {}) {
-    // Backend handles filtering; sortBy can stay in frontend
-    return httpService.get(TOY_API, filterBy)
-        .then(toys => {
-            if (!sortBy.type) return toys
+async function query(filterBy = {}, sortBy = {}) {
+    try {
+        const toys = await httpService.get(TOY_API, filterBy)
+        if (!sortBy.type) return toys
 
-            const { type, desc } = sortBy
-            return toys.sort((a, b) => {
-                const valA = a[type]
-                const valB = b[type]
+        const { type, desc } = sortBy
+        return toys.sort((a, b) => {
+            const valA = a[type]
+            const valB = b[type]
 
-                if (typeof valA === 'string' && typeof valB === 'string') {
-                    return desc ? valB.localeCompare(valA) : valA.localeCompare(valB)
-                }
-                return desc ? valB - valA : valA - valB
-            })
+            if (typeof valA === 'string' && typeof valB === 'string') {
+                return desc ? valB.localeCompare(valA) : valA.localeCompare(valB)
+            }
+            return desc ? valB - valA : valA - valB
         })
+    } catch (err) {
+        console.error('Error fetching toys:', err)
+        throw err
+    }
 }
 
-function getById(toyId) {
-    return httpService.get(TOY_API + toyId)
+async function getById(toyId) {
+    try {
+        return await httpService.get(TOY_API + toyId)
+    } catch (err) {
+        console.error('Error fetching toy by id:', err)
+        throw err
+    }
 }
 
-function save(toy) {
-    if (toy._id) return httpService.put(TOY_API + toy._id, toy)
-    return httpService.post(TOY_API, toy)
+async function save(toy) {
+    try {
+        if (toy._id) return await httpService.put(TOY_API + toy._id, toy)
+        return await httpService.post(TOY_API, toy)
+    } catch (err) {
+        console.error('Error saving toy:', err)
+        throw err
+    }
 }
 
-function remove(toyId) {
-    return httpService.delete(TOY_API + toyId)
+async function remove(toyId) {
+    try {
+        return await httpService.delete(TOY_API + toyId)
+    } catch (err) {
+        console.error('Error removing toy:', err)
+        throw err
+    }
 }
 
 function getEmptyToy() {
     return {
-        _id: '', // backend will assign an ID
+        _id: '', // backend assigns ObjectId
         name: '',
         price: 0,
         inStock: true,
@@ -62,4 +79,3 @@ function getDefaultFilter() {
         inStock: undefined
     }
 }
-

@@ -10,9 +10,15 @@ export default function ToyDetails() {
   const [isChatOpen, setIsChatOpen] = useState(false)
 
   useEffect(() => {
-    toyService.getById(toyId)
-      .then(setToy)
-      .catch(err => console.log('Cannot load toy', err))
+    const loadToy = async () => {
+      try {
+        const toy = await toyService.getById(toyId)
+        setToy(toy)
+      } catch (err) {
+        console.error('Cannot load toy', err)
+      }
+    }
+    loadToy()
   }, [toyId])
 
   if (!toy) return <div>Loading...</div>
@@ -21,9 +27,9 @@ export default function ToyDetails() {
     <>
       <section className="toy-details">
         <h2>{toy.name}</h2>
-        <img src={toy.imgUrl} alt={toy.name} />
+        {toy.imgUrl && <img src={toy.imgUrl} alt={toy.name} />}
         <p>Price: ${toy.price}</p>
-      <p>Labels: {toy.labels.join(', ')}</p>
+        <p>Labels: {toy.labels.join(', ')}</p>
       <p>{toy.inStock ? 'In Stock' : 'Out of Stock'}</p>
 
       {/* Chat button */}
