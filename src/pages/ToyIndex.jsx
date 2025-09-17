@@ -7,6 +7,7 @@ import {
   loadToys,
   deleteToy,
 } from '../store/actions/toy.actions.js'
+import { userService } from '../services/userService.js'
 
 export default function ToyIndex() {
   const navigate = useNavigate()
@@ -14,6 +15,8 @@ export default function ToyIndex() {
   const filterBy = useSelector(state => state.toyModule.filterBy)
   const sortBy = useSelector(state => state.toyModule.sortBy)
   const isLoading = useSelector(state => state.toyModule.isLoading)
+
+  const user = userService.getLoggedInUser()
 
   // ---------------- LOAD TOYS ----------------
   useEffect(() => {
@@ -40,9 +43,11 @@ export default function ToyIndex() {
     <section className="toy-index">
       <div className="toy-controls">
         <ToyFilter />
-        <button className="add-btn" onClick={onAddToy}>
-          Add Random Toy ⛐
-        </button>
+        {user?.isAdmin && (
+          <button className="add-btn" onClick={onAddToy}>
+            Add Toy ⛐
+          </button>
+        )}
       </div>
 
       {isLoading ? (
@@ -50,8 +55,9 @@ export default function ToyIndex() {
       ) : (
         <ToyList
           toys={toys}
-          onRemoveToy={onRemoveToy}
-          onEditToy={onEditToy}
+          onRemoveToy={user?.isAdmin ? onRemoveToy : null}
+          onEditToy={user?.isAdmin ? onEditToy : null}
+          user={user}
         />
       )}
     </section>

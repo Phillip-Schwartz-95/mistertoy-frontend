@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { userService } from '../services/userService.js'
-import { useTranslation } from 'react-i18next'
 
-export function Home() {
-  const { t } = useTranslation()
+export default function Login() {
   const [credentials, setCredentials] = useState({ username: '', password: '' })
   const [error, setError] = useState(null)
   const navigate = useNavigate()
@@ -18,7 +16,6 @@ export function Home() {
     ev.preventDefault()
     try {
       await userService.login(credentials)
-      setError(null)
       navigate('/toy') // redirect to toys after login
     } catch {
       setError('Invalid username or password')
@@ -26,30 +23,31 @@ export function Home() {
   }
 
   return (
-    <section className="home">
-      <h1>{t('welcome')}</h1>
-      <p>{t('instructions')}</p>
-
-      <form onSubmit={onLogin} className="login-form">
-        <input
-          type="text"
-          name="username"
-          value={credentials.username}
-          onChange={handleChange}
-          placeholder="Username"
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          value={credentials.password}
-          onChange={handleChange}
-          placeholder="Password"
-          required
-        />
+    <section className="login-page">
+      <h2>Login</h2>
+      <form onSubmit={onLogin}>
+        <div>
+          <label>Username:</label>
+          <input
+            type="text"
+            name="username"
+            value={credentials.username}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label>Password:</label>
+          <input
+            type="password"
+            name="password"
+            value={credentials.password}
+            onChange={handleChange}
+            required
+          />
+        </div>
         <button type="submit">Login</button>
       </form>
-
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </section>
   )

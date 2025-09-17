@@ -1,6 +1,6 @@
 import ToyPreview from './ToyPreview.jsx'
 
-export default function ToyList({ toys, onRemoveToy, onEditToy }) {
+export default function ToyList({ toys, onRemoveToy, onEditToy, user }) {
   return (
     <ul className="toy-list">
       {toys.map(toy => (
@@ -9,6 +9,7 @@ export default function ToyList({ toys, onRemoveToy, onEditToy }) {
           toy={toy} 
           onRemoveToy={onRemoveToy} 
           onEditToy={onEditToy} 
+          user={user}
         />
       ))}
     </ul>
