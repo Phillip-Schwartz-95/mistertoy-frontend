@@ -7,6 +7,8 @@ export const toyService = {
     getById,
     save,
     remove,
+    addMsg,
+    removeMsg,
     getEmptyToy,
     getDefaultFilter,
 }
@@ -58,6 +60,24 @@ async function remove(toyId) {
         console.error('Error removing toy:', err)
         throw err
     }
+}
+
+async function addMsg(toyId, txt) {
+  try {
+    return await httpService.post(`${TOY_API}${toyId}/msg`, { txt })
+  } catch (err) {
+    console.error('Error adding toy msg:', err)
+    throw err
+  }
+}
+
+async function removeMsg(toyId, msgId) {
+  try {
+    return await httpService.delete(`${TOY_API}${toyId}/msg/${msgId}`)
+  } catch (err) {
+    console.error('Error removing toy msg:', err)
+    throw err
+  }
 }
 
 function getEmptyToy() {
