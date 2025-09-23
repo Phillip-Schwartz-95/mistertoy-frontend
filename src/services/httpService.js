@@ -1,8 +1,10 @@
 import Axios from 'axios'
 
-const BASE_URL = window.location.hostname === 'phillip-schwartz-95.github.io'
+const isLocalhost = window.location.hostname === 'localhost'
+
+const BASE_URL = !isLocalhost
     ? 'https://mistertoy-backend-o4uh.onrender.com/api/'
-    : '//localhost:3030/api/'
+    : 'http://localhost:3030/api/'
 
 var axios = Axios.create({
     withCredentials: true
