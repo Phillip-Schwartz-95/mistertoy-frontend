@@ -6,6 +6,9 @@ export const userService = {
   login,
   logout,
   getLoggedInUser,
+  //signup, 
+  // //remember to add this
+  getById
 }
 
 async function login(credentials) {
@@ -32,4 +35,8 @@ async function logout() {
 function getLoggedInUser() {
   const user = sessionStorage.getItem('loggedInUser')
   return user ? JSON.parse(user) : null
+}
+
+async function getById(userId) {
+  return httpService.get(`user/${userId}`)
 }

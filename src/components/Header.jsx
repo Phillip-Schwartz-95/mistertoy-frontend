@@ -24,7 +24,6 @@ export default function Header() {
 
     return (
         <header className="main-header">
-
             <div className="header-left">
                 <Link to="/" className="logo">MisterToy</Link>
             </div>
@@ -34,25 +33,31 @@ export default function Header() {
                     <NavLink to="/toy">Toys</NavLink>
                     <NavLink to="/dashboard">Dashboard</NavLink>
                     <NavLink to="/about">About</NavLink>
+                    <NavLink to="/review">Reviews</NavLink>
+                    {user && (
+                        <NavLink to={`/user/${user._id}`}>My Profile</NavLink>
+                    )}
                 </nav>
+
                 <div className="user-status">
                     {user ? (
                         <>
-                            <span>Signed in as: {user.fullname} {user.isAdmin && '(Admin)'}</span>
+                            <span>
+                                Signed in as: {user.fullname} {user.isAdmin && '(Admin)'}
+                            </span>
                             <button onClick={onLogout}>Logout</button>
                         </>
                     ) : (
                         <span>Not signed in</span>
                     )}
                 </div>
+
                 <select onChange={handleChange} value={i18n.language}>
                     <option value="en">English</option>
                     <option value="fr">Français</option>
                     <option value="es">Español</option>
                 </select>
             </div>
-
         </header>
     )
 }
-

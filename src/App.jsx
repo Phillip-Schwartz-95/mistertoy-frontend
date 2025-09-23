@@ -3,6 +3,8 @@ import ToyIndex from './pages/ToyIndex.jsx'
 import ToyDetails from './pages/ToyDetails.jsx'
 import ToyEdit  from './pages/ToyEdit.jsx'
 import Dashboard  from './pages/Dashboard.jsx'
+import ReviewExplore from './pages/ReviewExplore.jsx'
+import UserDetails from './pages/UserDetails.jsx'
 import About from './pages/About.jsx'
 import { Home } from './pages/Home.jsx'
 import Header from './components/Header.jsx'
@@ -39,7 +41,8 @@ function App() {
         <Route path="/toy/edit" element={requireAdmin(<ToyEdit />)} />
         <Route path="/toy/edit/:toyId" element={requireAdmin(<ToyEdit />)} />
         <Route path="/dashboard" element={requireAuth(<Dashboard />)} />
-
+        <Route path="/review" element={<ReviewExplore />} />
+        <Route path="/user/:userId" element={<UserDetails />} />
         <Route path="/about" element={<About />} />
       </Routes>
     </main>
