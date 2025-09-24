@@ -16,7 +16,11 @@ export default function Login() {
     ev.preventDefault()
     try {
       await userService.login(credentials)
-      navigate('/toy') // redirect to toys after login
+
+      // Force reload so App.jsx re-checks the logged-in user
+      window.location.href = '/toy'
+      
+      // navigate('/toy') // 
     } catch {
       setError('Invalid username or password')
     }
@@ -52,3 +56,4 @@ export default function Login() {
     </section>
   )
 }
+

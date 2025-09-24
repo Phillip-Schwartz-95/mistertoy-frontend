@@ -3,15 +3,18 @@ import { useEffect, useState } from 'react'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 import { toyService } from '../services/toyService.js'
-import { saveToy } from '../store/actions/toy.actions.js'   // ✅ fixed import
+import { saveToy } from '../store/actions/toy.actions.js'   // fixed import
 import { useOnlineStatus } from '../custom-hooks/useOnlineStatus.js'
 import { useExitWhileUnsavedChanges } from '../custom-hooks/useExitWhileUnsavedChanges.js'
 import { useTranslation } from 'react-i18next'
+import { uploadService } from '../services/uploadService.js'
 
 export default function ToyEdit() {
   const { toyId } = useParams()
   const [toy, setToy] = useState(toyService.getEmptyToy())
   const [isDirty, setIsDirty] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadErr, setUploadErr] = useState('')
   const navigate = useNavigate()
   const isOnline = useOnlineStatus()
   const { t } = useTranslation()
@@ -51,11 +54,29 @@ export default function ToyEdit() {
     }
 
     try {
-      await saveToy(values)   // ✅ dispatches ADD_TOY or UPDATE_TOY internally
+      await saveToy(values)   // dispatches ADD_TOY or UPDATE_TOY internally
       setIsDirty(false)
       navigate('/toy')
     } catch (err) {
       console.error('Cannot save toy', err)
+    }
+  }
+
+  // Upload handler
+  async function onUploadImg(ev, setFieldValue) {
+    const file = ev.target.files?.[0]
+    if (!file) return
+    setIsUploading(true)
+    setUploadErr('')
+    try {
+      const res = await uploadService.uploadImg(file)
+      setFieldValue('imgUrl', res.secure_url) // update Formik field
+      setIsDirty(true)
+    } catch (err) {
+      console.error('Upload failed', err)
+      setUploadErr('Image upload failed. Try again.')
+    } finally {
+      setIsUploading(false)
     }
   }
 
@@ -66,7 +87,7 @@ export default function ToyEdit() {
       validationSchema={ToySchema}
       onSubmit={onSaveToy}
     >
-      {({ errors, touched, handleChange, values }) => (
+      {({ errors, touched, handleChange, values, setFieldValue }) => (
         <Form>
           {!isOnline && (
             <p style={{ color: 'red' }}>
@@ -102,6 +123,27 @@ export default function ToyEdit() {
             />
             {errors.price && touched.price && (
               <div style={{ color: 'red' }}>{errors.price}</div>
+            )}
+          </div>
+
+          {/* Image upload */}
+          <div>
+            <label>Upload Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={ev => onUploadImg(ev, setFieldValue)}
+            />
+            {isUploading && <p>Uploading...</p>}
+            {uploadErr && <p style={{ color: 'crimson' }}>{uploadErr}</p>}
+            {values.imgUrl && (
+              <div style={{ marginTop: 8 }}>
+                <img
+                  src={values.imgUrl}
+                  alt="Toy"
+                  style={{ width: 150, borderRadius: 8 }}
+                />
+              </div>
             )}
           </div>
 

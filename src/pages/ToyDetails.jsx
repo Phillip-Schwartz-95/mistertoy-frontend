@@ -69,7 +69,22 @@ export default function ToyDetails() {
     <>
       <section className="toy-details">
         <h2>{toy.name}</h2>
-        {toy.imgUrl && <img src={toy.imgUrl} alt={toy.name} />}
+        {toy.imgUrl && (
+          <div style={{ margin: '1rem 0', textAlign: 'center' }}>
+            <img
+              src={toy.imgUrl}
+              alt={toy.name}
+              style={{
+                maxWidth: '300px',
+                width: '100%',
+                height: 'auto',
+                borderRadius: '12px',
+                boxShadow: '0 4px 10px rgba(0, 0, 0, 0.15)',
+                objectFit: 'cover',
+              }}
+            />
+          </div>
+        )}
         <p>Price: ${toy.price}</p>
         <p>Labels: {toy.labels.join(', ')}</p>
         <p>{toy.inStock ? 'In Stock' : 'Out of Stock'}</p>
