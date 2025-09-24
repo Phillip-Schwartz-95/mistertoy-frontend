@@ -9,6 +9,11 @@ Currently, two official plugins are available:
 
 # MisterToy Frontend
 
+cd mistertoy-frontend
+npm install
+
+local dev: npm run dev/ npm run build
+
 Live site: [https://mistertoy-frontend-fjbo.onrender.com](https://mistertoy-frontend-fjbo.onrender.com)
 
 Backend API: [https://mistertoy-backend-o4uh.onrender.com/api](https://mistertoy-backend-o4uh.onrender.com/api)
