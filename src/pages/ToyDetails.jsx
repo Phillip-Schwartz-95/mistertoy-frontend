@@ -4,7 +4,7 @@ import { toyService } from '../services/toyService.js'
 import { reviewService } from '../services/reviewService.js'
 import { userService } from '../services/userService.js'
 import Popup from '../components/Popup.jsx'
-import Chat from '../components/Chat.jsx'
+import ChatRoom from '../components/ChatRoom.jsx'
 
 export default function ToyDetails() {
   const { toyId } = useParams()
@@ -46,7 +46,7 @@ export default function ToyDetails() {
     if (!user) return alert('You must be logged in to add a message')
 
     try {
-      const msg = await toyService.addMsg(toyId, newMsg)   // call backend
+      const msg = await toyService.addMsg(toyId, newMsg)
       setToy(prev => ({ ...prev, msgs: [...(prev.msgs || []), msg] }))
       setNewMsg('')
     } catch (err) {
@@ -86,9 +86,7 @@ export default function ToyDetails() {
           </div>
         )}
         <p>Price: ${toy.price}</p>
-        <p>Labels: {toy.labels.join(', ')}</p>
         <p>{toy.inStock ? 'In Stock' : 'Out of Stock'}</p>
-
 
         {/* Messages map */}
         <h3>Messages</h3>
@@ -100,7 +98,6 @@ export default function ToyDetails() {
           ))}
         </ul>
 
-        {/* Add message form for users */}
         {user ? (
           <form onSubmit={onAddMsg}>
             <input
@@ -116,7 +113,7 @@ export default function ToyDetails() {
           <p style={{ color: 'gray' }}>Login to add a message</p>
         )}
 
-        {/* Reviews Map */}
+        {/* Reviews */}
         <h4>Reviews</h4>
         <ul>
           {reviews.map(r => (
@@ -129,7 +126,6 @@ export default function ToyDetails() {
           ))}
         </ul>
 
-        {/* Add Review Form */}
         {user ? (
           <form onSubmit={onAddReview}>
             <input
@@ -154,11 +150,10 @@ export default function ToyDetails() {
             footer={<button onClick={() => setIsChatOpen(false)}>Close</button>}
             onClose={() => setIsChatOpen(false)}
           >
-            <Chat />
+            <ChatRoom toyId={toy._id} user={user} />
           </Popup>
         )}
       </section>
-
     </>
   )
 }
